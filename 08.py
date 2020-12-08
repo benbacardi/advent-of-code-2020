@@ -2,7 +2,7 @@
 
 
 # Part 1
-def run(instructions):
+def run(instructions, nop=None, jmp=None):
 
     seen = set()
     infinite = False
@@ -16,6 +16,10 @@ def run(instructions):
         seen.add(line_ref)
         instruction, value = instructions[line_ref].split()
         value = int(value)
+        if line_ref == nop:
+            instruction = 'nop'
+        elif line_ref == 'jmp':
+            instruction == 'jmp'
         if instruction == 'acc':
             acc += value
             line_ref += 1
@@ -32,17 +36,13 @@ def fix(instructions):
 
     nops = [i for i, line in enumerate(instructions) if line.startswith('nop')]
     for nop in nops:
-        new_instructions = instructions[:]
-        new_instructions[nop] = new_instructions[nop].replace('nop', 'jmp')
-        acc, fixed = run(new_instructions)
+        acc, fixed = run(instructions, jmp=nop)
         if fixed:
             return acc
 
     jmps = [i for i, line in enumerate(instructions) if line.startswith('jmp')]
     for jmp in reversed(jmps):
-        new_instructions = instructions[:]
-        new_instructions[jmp] = new_instructions[jmp].replace('jmp', 'nop')
-        acc, fixed = run(new_instructions)
+        acc, fixed = run(instructions, nop=jmp)
         if fixed:
             return acc
 
